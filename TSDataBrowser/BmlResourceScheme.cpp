@@ -10,12 +10,9 @@ bool BmlResourceScheme::Open(CefRefPtr<CefRequest> request,
   std::ifstream input("../x64/Debug/sampledata/40/0000/startup.bml",
                       std::ios::binary);
 
-  std::ofstream output("../x64/Debug/modified.bml", std::ios::binary);
-
   if (input) {
     std::stringstream buffer;
     buffer << input.rdbuf();
-    file_size = buffer.tellg();
 
     input.close();
 
@@ -34,7 +31,7 @@ bool BmlResourceScheme::Open(CefRefPtr<CefRequest> request,
 
     CheckBML(doc.first_node());
 
-    rapidxml::print(std::ostream_iterator<char>(output), doc,
+    rapidxml::print(std::ostream_iterator<char>(xml_output), doc,
                     rapidxml::print_script_noexpand);
 
     handle_request = true;
@@ -48,9 +45,11 @@ void BmlResourceScheme::GetResponseHeaders(CefRefPtr<CefResponse> response,
                                            int64& response_length,
                                            CefString& redirectUrl) {
   response->SetCharset("EUC-JP");
-  response->SetMimeType("text/xhtml");
+  response->SetMimeType("text/html");
   response->SetStatus(200);
-  response_length = file_size;
+  xml_output.seekg(0, std::ios::end);
+  file_size = response_length = xml_output.tellg();
+  xml_output.seekg(0, std::ios::beg);
 }
 
 void BmlResourceScheme::Cancel() {}
@@ -62,8 +61,8 @@ bool BmlResourceScheme::Read(void* data_out,
   int remain = file_size - file_pos;
   auto size = std::min(remain, bytes_to_read);
   if (size > 0) {
-    input_->read((char*)data_out, size);
-    size = (int)input_->tellg() - file_pos;
+    xml_output.read((char*)data_out, size);
+    size = (int)xml_output.tellg() - file_pos;
     bytes_read = size;
     file_pos += size;
   } else {

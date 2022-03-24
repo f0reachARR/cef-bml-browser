@@ -22,9 +22,8 @@ class BmlResourceScheme : public CefResourceHandler {
             CefRefPtr<CefResourceReadCallback> callback) override;
 
  private:
-  std::ifstream* input_ = nullptr;
-  int file_size = 0;
-  int file_pos = 0;
+  std::stringstream xml_output;
+  int file_size, file_pos;
 
   void CheckBML(rapidxml::xml_node<>* node);
 
