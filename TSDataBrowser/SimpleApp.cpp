@@ -1,5 +1,6 @@
 #include "SimpleApp.h"
 #include "CustomSchemeFactory.h"
+#include "RenderProcessHandler.h"
 #include "SimpleHandler.h"
 #include "pch.h"
 
@@ -64,6 +65,10 @@ class SimpleBrowserViewDelegate : public CefBrowserViewDelegate {
 };
 
 SimpleApp::SimpleApp() {}
+
+CefRefPtr<CefRenderProcessHandler> SimpleApp::GetRenderProcessHandler() {
+  return new RenderProcessHandler();
+}
 
 void SimpleApp::OnRegisterCustomSchemes(
     CefRawPtr<CefSchemeRegistrar> registrar) {
