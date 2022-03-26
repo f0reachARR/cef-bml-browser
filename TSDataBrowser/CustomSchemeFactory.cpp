@@ -1,6 +1,7 @@
-#include "CustomSchemeFactory.h"
+#include "pch.h"
 
 #include "BmlResourceScheme.h"
+#include "CustomSchemeFactory.h"
 
 CefRefPtr<CefResourceHandler> CustomSchemeFactory::Create(
     CefRefPtr<CefBrowser> browser,

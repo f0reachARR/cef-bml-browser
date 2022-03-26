@@ -1,3 +1,5 @@
+#include "pch.h"
+
 #include "RenderProcessHandler.h"
 
 void RenderProcessHandler::OnContextCreated(CefRefPtr<CefBrowser> browser,
@@ -6,9 +8,10 @@ void RenderProcessHandler::OnContextCreated(CefRefPtr<CefBrowser> browser,
   CefRefPtr<CefV8Value> window = context->GetGlobal();
 
   // Create a new V8 string value. See the "Basic JS Types" section below.
-  CefRefPtr<CefV8Value> str = CefV8Value::CreateString("My Value!");
+  CefRefPtr<CefV8Value> browser_object =
+      CefV8Value::CreateObject(nullptr, nullptr);
 
-  // Add the string to the window object as "window.myval". See the "JS Objects"
-  // section below.
-  window->SetValue("browser", str, V8_PROPERTY_ATTRIBUTE_NONE);
+  // Add the string to the window object as "window.myval". See the "JS
+  // Objects" section below.
+  window->SetValue("browser", browser_object, V8_PROPERTY_ATTRIBUTE_NONE);
 }

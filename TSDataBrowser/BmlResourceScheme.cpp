@@ -1,5 +1,6 @@
 #include "BmlResourceScheme.h"
 #include <fstream>
+#include "pch.h"
 #include "rapidxml.hpp"
 #include "rapidxml_print.hpp"
 
