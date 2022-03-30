@@ -13,4 +13,9 @@
 
 #include <LibISDB.hpp>
 
+#include <Engine/StreamSourceEngine.hpp>
+#include <TS/TSDownload.hpp>
+
+using namespace LibISDB;
+
 #endif  // PCH_H
