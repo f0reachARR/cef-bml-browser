@@ -50,12 +50,28 @@ void BmlDataParser::OnDataModule(
   auto it = m_ModuleMap.find(pModuleInfo->ModuleID);
 
   if (it == m_ModuleMap.end()) {
+    m_ModuleMap.emplace(pModuleInfo->ModuleID,
+                        new BmlModule(pMessageInfo->DownloadID,
+                                      pMessageInfo->BlockSize, &Info, this));
   } else if ((it->second->GetDownloadID() != pMessageInfo->DownloadID) ||
              (it->second->GetBlockSize() != pMessageInfo->BlockSize) ||
              (it->second->GetModuleSize() != pModuleInfo->ModuleSize) ||
              (it->second->GetModuleVersion() != pModuleInfo->ModuleVersion)) {
+    m_ModuleMap[pModuleInfo->ModuleID].reset(new BmlModule(
+        pMessageInfo->DownloadID, pMessageInfo->BlockSize, &Info, this));
   }
 }
 
 void BmlDataParser::OnDataBlock(
-    const DownloadDataBlockParser::DataBlockInfo* pDataBlock) {}
+    const DownloadDataBlockParser::DataBlockInfo* pDataBlock) {
+  auto it = m_ModuleMap.find(pDataBlock->ModuleID);
+  if (it != m_ModuleMap.end()) {
+    if ((it->second->GetDownloadID() == pDataBlock->DownloadID) &&
+        (it->second->GetModuleVersion() == pDataBlock->ModuleVersion)) {
+      it->second->StoreBlock(pDataBlock->BlockNumber, pDataBlock->pData,
+                             pDataBlock->DataSize);
+    }
+  }
+}
+
+void BmlDataParser::OnModuleDownload(const BmlModule* Module) {}

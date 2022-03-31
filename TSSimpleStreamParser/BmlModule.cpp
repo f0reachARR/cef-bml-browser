@@ -4,17 +4,18 @@
 BmlModule::BmlModule(uint32_t DownloadID,
                      uint16_t BlockSize,
                      BmlModuleInfo* Info,
-                     BmlModuleHandler* Handler)
+                     BmlModuleDownloadHandler* Handler)
     : DataModule(DownloadID,
                  BlockSize,
                  Info->ModuleID,
-                 Info->ModuleSize,
+                 Info->Compressed ? Info->CompressedSize : Info->ModuleSize,
                  Info->ModuleVersion),
-      m_Info(Info),
+      m_Info(*Info),
       m_Handler(Handler) {}
 
 void BmlModule::OnComplete(const uint8_t* pData, uint32_t ModuleSize) {
   // TODO: Parse module
-  std::vector<ModuleData> ModuleList;
-  m_Handler->OnModuleDownload(this, ModuleList);
+  m_Modules.clear();
+
+  m_Handler->OnModuleDownload(this);
 }

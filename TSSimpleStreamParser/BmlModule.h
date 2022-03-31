@@ -1,7 +1,19 @@
 #pragma once
 
-#include "BmlDataParser.h"
 #include "pch.h"
+
+struct BmlModuleInfo {
+  uint16_t ServiceID;
+  uint16_t ComponentID;
+  uint16_t DataEventID;
+  uint16_t ModuleID;
+  uint16_t ModuleVersion;
+  uint32_t ModuleSize;
+  uint32_t CompressedSize;
+  std::string ContentType;
+  bool Compressed;
+  bool ReturnToEntryFlag;
+};
 
 class BmlModule : public DataModule {
  public:
@@ -12,19 +24,20 @@ class BmlModule : public DataModule {
     uint32_t DataSize;
   } ModuleData;
 
-  class BmlModuleHandler {
+  class BmlModuleDownloadHandler {
    public:
-    virtual void OnModuleDownload(const BmlModule* Module,
-                                  const std::vector<ModuleData>& Data) = 0;
+    virtual void OnModuleDownload(const BmlModule* Module) = 0;
   };
 
   BmlModule(uint32_t DownloadID,
             uint16_t BlockSize,
             BmlModuleInfo* Info,
-            BmlModuleHandler* Handler);
+            BmlModuleDownloadHandler* Handler);
 
  private:
-  BmlModuleHandler* m_Handler;
-  BmlModuleInfo* m_Info;
+  BmlModuleDownloadHandler* m_Handler;
+  BmlModuleInfo m_Info;
+  std::vector<ModuleData> m_Modules;
+
   void OnComplete(const uint8_t* pData, uint32_t ModuleSize) override;
 };

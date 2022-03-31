@@ -1,26 +1,14 @@
 #pragma once
 
+#include "BmlModule.h"
 #include "pch.h"
-
-struct BmlModuleInfo {
-  uint16_t ServiceID;
-  uint16_t ComponentID;
-  uint16_t DataEventID;
-  uint16_t ModuleID;
-  uint16_t ModuleVersion;
-  uint32_t ModuleSize;
-  uint32_t CompressedSize;
-  std::string ContentType;
-  bool Compressed;
-  bool ReturnToEntryFlag;
-};
 
 class BmlModuleHandler {
  public:
   virtual ~BmlModuleHandler() = default;
 
   virtual void OnModuleListUpdate(const BmlModuleInfo& Data) = 0;
-  virtual void OnModuleDownload(const BmlModuleData& Data) = 0;
+  virtual void OnModuleDownload(const BmlModule& Data) = 0;
 };
 
 class BmlParserFilter : public LibISDB::SingleIOFilter {
@@ -37,6 +25,9 @@ class BmlParserFilter : public LibISDB::SingleIOFilter {
   // SingleIOFilter
   bool ProcessData(DataStream* pData) override;
 
+  // Handlers
+  void SetModuleHandler(BmlModuleHandler* pBmlHandler);
+
  private:
   typedef std::pair<uint16_t, uint8_t> PIDToComponentMapItem;
   struct ServiceInfo {
@@ -48,9 +39,6 @@ class BmlParserFilter : public LibISDB::SingleIOFilter {
   LibISDB::PIDMapManager m_PIDMapManager;
   std::vector<ServiceInfo> m_ServiceList;
   BmlModuleHandler* m_pBmlHandler;
-
-  // Handlers
-  void SetModuleHandler(BmlModuleHandler* pBmlHandler);
 
   // Basic packet processor
   void OnPATSection(const PSITableBase* pTable, const PSISection* pSection);

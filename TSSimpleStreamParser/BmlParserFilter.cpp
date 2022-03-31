@@ -2,6 +2,10 @@
 #include "BmlDataParser.h"
 #include "pch.h"
 
+BmlParserFilter::BmlParserFilter() {
+  Reset();
+}
+
 void BmlParserFilter::Reset() {
   BlockLock lock(m_FilterLock);
 
@@ -18,6 +22,10 @@ bool BmlParserFilter::ProcessData(DataStream* pData) {
     m_PIDMapManager.StorePacketStream(pData);
 
   return true;
+}
+
+void BmlParserFilter::SetModuleHandler(BmlModuleHandler* pBmlHandler) {
+  m_pBmlHandler = pBmlHandler;
 }
 
 void BmlParserFilter::OnPATSection(const PSITableBase* pTable,
@@ -102,8 +110,8 @@ bool BmlParserFilter::MapDataES(int Index) {
 
   for (PIDToComponentMapItem Mapper : Info.PIDToComponentMap) {
     m_PIDMapManager.MapTarget(
-        Mapper.first, new BmlDataParser(DSMCCSection::BindLogoDataHandler(
-                          &BmlParserFilter::OnModuleUpdate, this)));
+        Mapper.first,
+        new BmlDataParser(Info.ServiceID, Mapper.second, m_pBmlHandler));
   }
 
   return true;

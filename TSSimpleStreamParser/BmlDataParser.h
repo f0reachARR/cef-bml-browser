@@ -1,13 +1,14 @@
 #pragma once
 
+#include "pch.h"
+
 #include "BmlModule.h"
 #include "BmlParserFilter.h"
-#include "pch.h"
 
 class BmlDataParser : public PSIStreamTable,
                       public DownloadInfoIndicationParser::EventHandler,
                       public DownloadDataBlockParser::EventHandler,
-{
+                      public BmlModule::BmlModuleDownloadHandler {
  public:
   BmlDataParser(const uint16_t ServiceID,
                 const uint8_t ComponentID,
@@ -25,6 +26,9 @@ class BmlDataParser : public PSIStreamTable,
   // DownloadDataBlockParser::EventHandler
   void OnDataBlock(
       const DownloadDataBlockParser::DataBlockInfo* pDataBlock) override;
+
+  // BmlModule
+  void OnModuleDownload(const BmlModule* Module) override;
 
   DownloadInfoIndicationParser m_DII;
   DownloadDataBlockParser m_DDB;
