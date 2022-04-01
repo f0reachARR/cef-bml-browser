@@ -8,7 +8,7 @@ class BmlModuleHandler {
   virtual ~BmlModuleHandler() = default;
 
   virtual void OnModuleListUpdate(const BmlModuleInfo& Data) = 0;
-  virtual void OnModuleDownload(const BmlModule& Data) = 0;
+  virtual void OnModuleDownload(const BmlModule* Data) = 0;
 };
 
 class BmlParserFilter : public LibISDB::SingleIOFilter {

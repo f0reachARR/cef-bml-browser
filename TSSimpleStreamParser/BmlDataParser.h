@@ -12,7 +12,7 @@ class BmlDataParser : public PSIStreamTable,
  public:
   BmlDataParser(const uint16_t ServiceID,
                 const uint8_t ComponentID,
-                const BmlModuleHandler* pHandler);
+                BmlModuleHandler* pHandler);
 
  private:
   // PSIStreamTable
@@ -35,7 +35,7 @@ class BmlDataParser : public PSIStreamTable,
 
   const uint8_t m_ServiceID;
   const uint8_t m_ComponentID;
-  const BmlModuleHandler* m_pHandler;
+  BmlModuleHandler* m_pHandler;
 
   std::map<uint16_t, std::unique_ptr<BmlModule>> m_ModuleMap;
 };

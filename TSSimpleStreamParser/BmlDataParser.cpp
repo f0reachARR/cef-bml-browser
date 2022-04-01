@@ -3,7 +3,7 @@
 
 BmlDataParser::BmlDataParser(const uint16_t ServiceID,
                              const uint8_t ComponentID,
-                             const BmlModuleHandler* pHandler)
+                             BmlModuleHandler* pHandler)
     : PSIStreamTable(true, true),
       m_DII(this),
       m_DDB(this),
@@ -74,4 +74,8 @@ void BmlDataParser::OnDataBlock(
   }
 }
 
-void BmlDataParser::OnModuleDownload(const BmlModule* Module) {}
+void BmlDataParser::OnModuleDownload(const BmlModule* Module) {
+  if (m_pHandler != nullptr) {
+    m_pHandler->OnModuleDownload(Module);
+  }
+}
