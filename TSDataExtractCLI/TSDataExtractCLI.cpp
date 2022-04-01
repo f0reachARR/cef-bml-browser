@@ -14,7 +14,12 @@
 class ISDBBmlParserEngine : public LibISDB::StreamSourceEngine,
                             public BmlModuleHandler {
   void OnModuleListUpdate(const BmlModuleInfo& Data) override {}
-  void OnModuleDownload(const BmlModule& Data) override {}
+  void OnModuleDownload(const BmlModule* Data) override {
+    std::cout.setf(std::ios::hex, std::ios::basefield);
+    std::cout << "Download " << Data->GetModuleInfo().ComponentID << "/"
+              << Data->GetModuleID() << " Count:" << Data->GetModules().size()
+              << std::endl;
+  }
 };
 
 #if defined(LIBISDB_WCHAR)
