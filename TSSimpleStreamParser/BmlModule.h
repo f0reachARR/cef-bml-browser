@@ -20,7 +20,7 @@ class BmlModule : public DataModule {
   typedef struct {
     std::string ContentLocation;
     std::string ContentType;
-    const char* pData;
+    const uint8_t* pData;
     uint32_t DataSize;
   } ModuleData;
 
@@ -34,10 +34,20 @@ class BmlModule : public DataModule {
             BmlModuleInfo* Info,
             BmlModuleDownloadHandler* Handler);
 
+  const std::vector<ModuleData>& GetModules() const { return m_Modules; }
+  const BmlModuleInfo& GetModuleInfo() const { return m_Info; }
+
  private:
   BmlModuleDownloadHandler* m_Handler;
   BmlModuleInfo m_Info;
   std::vector<ModuleData> m_Modules;
+  uint8_t* m_pUncompressedBuffer;
 
   void OnComplete(const uint8_t* pData, uint32_t ModuleSize) override;
+
+  std::string ReadLine(const uint8_t** pData, uint32_t& RemainSize);
+  std::string ReadBoundary(const std::string& ContentType);
+  void ReadHeader(const uint8_t** pData,
+                  uint32_t& RemainSize,
+                  std::map<const std::string, const std::string>& Headers);
 };

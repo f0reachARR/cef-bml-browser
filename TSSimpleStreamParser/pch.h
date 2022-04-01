@@ -18,4 +18,6 @@
 
 using namespace LibISDB;
 
+#include <zlib.h>
+
 #endif  // PCH_H
