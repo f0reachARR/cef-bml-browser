@@ -11,21 +11,27 @@ BmlModule::BmlModule(uint32_t DownloadID,
                  Info->Compressed ? Info->CompressedSize : Info->ModuleSize,
                  Info->ModuleVersion),
       m_Info(*Info),
-      m_Handler(Handler),
-      m_pUncompressedBuffer(nullptr) {}
+      m_Handler(Handler) {}
+
+BmlModule::~BmlModule() {
+  for (const auto& it : m_Modules) {
+    free((void*)it.pData);
+  }
+}
 
 void BmlModule::OnComplete(const uint8_t* pData, uint32_t ModuleSize) {
-  // TODO: Parse module
-  m_Modules.clear();
+  // Skip already parsed
+  if (m_Modules.size() > 0)
+    return;
 
   if (m_Info.Compressed) {
-    m_pUncompressedBuffer = (uint8_t*)malloc(m_Info.ModuleSize);
+    auto pUncompressedBuffer = (uint8_t*)malloc(m_Info.ModuleSize);
     z_stream zst;
     zst.zalloc = (alloc_func)0;
     zst.zfree = (free_func)0;
     zst.next_in = (Bytef*)pData;
     zst.avail_in = m_Info.CompressedSize;
-    zst.next_out = (Bytef*)m_pUncompressedBuffer;
+    zst.next_out = (Bytef*)pUncompressedBuffer;
     zst.avail_out = m_Info.ModuleSize;
     int z_err = inflateInit(&zst);
     if (z_err == Z_OK) {
@@ -38,9 +44,11 @@ void BmlModule::OnComplete(const uint8_t* pData, uint32_t ModuleSize) {
       return;
     }
 
-    pData = m_pUncompressedBuffer;
+    pData = pUncompressedBuffer;
     ModuleSize = m_Info.ModuleSize;
   }
+
+  const auto* pBegin = pData;
 
   std::map<const std::string, const std::string> Headers;
   ReadHeader(&pData, ModuleSize, Headers);
@@ -102,7 +110,10 @@ void BmlModule::OnComplete(const uint8_t* pData, uint32_t ModuleSize) {
       it = Headers.find("Content-Location");
       auto ContentLocation = it == Headers.end() ? "" : it->second;
 
-      ModuleData Data = {ContentLocation, ContentType, pData, Length};
+      const uint8_t* pCopiedData = (const uint8_t*)malloc(Length);
+      memcpy((void*)pCopiedData, pData, Length);
+
+      ModuleData Data = {ContentLocation, ContentType, pCopiedData, Length};
       m_Modules.emplace_back(Data);
 
       pData += Length;
@@ -113,8 +124,14 @@ void BmlModule::OnComplete(const uint8_t* pData, uint32_t ModuleSize) {
     // Not multipart
     it = Headers.find("Content-Location");
     auto ContentLocation = it == Headers.end() ? "" : it->second;
-    ModuleData Data = {ContentLocation, ContentType, pData, ModuleSize};
+    const uint8_t* pCopiedData = (const uint8_t*)malloc(ModuleSize);
+    memcpy((void*)pCopiedData, pData, ModuleSize);
+    ModuleData Data = {ContentLocation, ContentType, pCopiedData, ModuleSize};
     m_Modules.emplace_back(Data);
+  }
+
+  if (m_Info.Compressed) {
+    free((void*)pBegin);
   }
   m_Handler->OnModuleDownload(this);
 }

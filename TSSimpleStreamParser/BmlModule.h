@@ -33,6 +33,7 @@ class BmlModule : public DataModule {
             uint16_t BlockSize,
             BmlModuleInfo* Info,
             BmlModuleDownloadHandler* Handler);
+  ~BmlModule();
 
   const std::vector<ModuleData>& GetModules() const { return m_Modules; }
   const BmlModuleInfo& GetModuleInfo() const { return m_Info; }
@@ -41,7 +42,6 @@ class BmlModule : public DataModule {
   BmlModuleDownloadHandler* m_Handler;
   BmlModuleInfo m_Info;
   std::vector<ModuleData> m_Modules;
-  uint8_t* m_pUncompressedBuffer;
 
   void OnComplete(const uint8_t* pData, uint32_t ModuleSize) override;
 
