@@ -4,14 +4,26 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.31005.135
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TSDataViewer", "TSDataViewer\TSDataViewer.vcxproj", "{BBA0ADD2-3FB2-4C51-8CC7-B034F6F0BF72}"
+	ProjectSection(ProjectDependencies) = postProject
+		{48AF6CDA-FC74-4BD0-B638-345529F2C777} = {48AF6CDA-FC74-4BD0-B638-345529F2C777}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TSDataBrowser", "TSDataBrowser\TSDataBrowser.vcxproj", "{4E297E3E-366D-4D27-8249-A54CB2328839}"
+	ProjectSection(ProjectDependencies) = postProject
+		{48AF6CDA-FC74-4BD0-B638-345529F2C777} = {48AF6CDA-FC74-4BD0-B638-345529F2C777}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibISDB", "LibISDB\Projects\LibISDB.vcxproj", "{55037A54-F0FB-446C-B81F-424C5D0FA3D9}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TSSimpleStreamParser", "TSSimpleStreamParser\TSSimpleStreamParser.vcxproj", "{48AF6CDA-FC74-4BD0-B638-345529F2C777}"
+	ProjectSection(ProjectDependencies) = postProject
+		{55037A54-F0FB-446C-B81F-424C5D0FA3D9} = {55037A54-F0FB-446C-B81F-424C5D0FA3D9}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TSDataExtractCLI", "TSDataExtractCLI\TSDataExtractCLI.vcxproj", "{799479FE-5F4C-4116-839C-C2BF4BE0811F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{48AF6CDA-FC74-4BD0-B638-345529F2C777} = {48AF6CDA-FC74-4BD0-B638-345529F2C777}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
